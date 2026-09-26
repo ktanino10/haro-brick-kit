@@ -264,20 +264,27 @@ async function ownership(language) {
   const message = "Command plugin:notification|is_permission_granted not allowed by ACL";
   const ctx = await context({ viewport: { width: 1000, height: 850 } }, true);
   await ctx.addInitScript(message => {
-    document.addEventListener("DOMContentLoaded", () => {
-      globalThis.probeStage = globalThis.haroBoot?.snapshot().stage;
-      void Promise.reject(message);
+    globalThis.probeStages = [];
+    const observer = new MutationObserver(() => {
+      const stage = globalThis.haroBoot?.snapshot().stage;
+      if (["bootstrap", "await-layout"].includes(stage) && !globalThis.probeStages.includes(stage)) {
+        globalThis.probeStages.push(stage);
+        void Promise.reject(message);
+      }
+      if (globalThis.probeStages.length === 2) observer.disconnect();
     });
+    observer.observe(document, { childList: true, subtree: true, characterData: true });
   }, message);
   const page = await ctx.newPage();
   await page.goto(urlFor(language, "viewer360.html"));
   await ready(page, "simple-400");
-  await page.waitForFunction(() => globalThis.haroBoot.snapshot().pageErrorCount > 0);
-  assert.equal(await page.evaluate(() => globalThis.probeStage), "await-layout");
+  await page.waitForFunction(() => globalThis.haroBoot.snapshot().pageErrorCount >= 2);
+  const injectedAt = await page.evaluate(() => globalThis.probeStages);
+  assert.deepEqual(injectedAt, ["bootstrap", "await-layout"]);
   assert.equal((await state(page)).brickCount, 2476);
   assert.equal(await page.evaluate(() => globalThis.haroBoot.snapshot().error), null);
   await page.evaluate(message => { void Promise.reject(message); }, message);
-  await page.waitForFunction(() => globalThis.haroBoot.snapshot().pageErrorCount >= 2);
+  await page.waitForFunction(() => globalThis.haroBoot.snapshot().pageErrorCount >= 3);
   await page.click('[data-view="back"]');
   pixels(await image(page));
   assert.equal((await state(page)).brickCount, 2476);
@@ -316,7 +323,7 @@ async function ownership(language) {
   assert.equal(await lostPage.evaluate(() => globalThis.haroBoot.snapshot().failureOperation), locale.runtime.opContext);
   await localized(lostPage, language);
   await lost.close();
-  return { language, externalRejectionsBeforeFirstFrameAndAfterReady: true, modelPreserved: true,
+  return { language, injectedAt, externalRejectionsBeforeFirstFrameAndAfterReady: true, modelPreserved: true,
     missingDataFatal: true, missingEngineFatal: !live, contextLossFatal: true, errorsLocalized: true };
 }
 
