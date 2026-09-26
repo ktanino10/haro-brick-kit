@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+<link rel="icon" href="data:,"><title>同じブロックで、ハロの大きさを比較</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f1f5f2;color:#183326;font:16px/1.75 system-ui,sans-serif}
+main{max-width:1800px;margin:auto;padding:24px 24px 64px}nav{display:flex;justify-content:space-between;gap:12px;align-items:center}
+h1{font-size:clamp(25px,3.5vw,42px);line-height:1.4}h2{margin:28px 0 14px}
+a{color:#28623c;text-underline-offset:.2em}.badge{border-radius:20px;background:#deeadb;padding:4px 12px;font-size:12px}
+.viewer-link{display:inline-block;padding:10px 18px;border-radius:9px;background:#284f35;color:white;text-decoration:none;font-weight:600}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid #69816d;padding:9px 16px;background:white;color:#23482d}
+button[aria-pressed=true]{background:#284f35;color:white}button:focus-visible,a:focus-visible{outline:3px solid #70a77c;outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}article{background:white;border-radius:15px;overflow:hidden;border:1px solid #d3e0d5}
+.stage{aspect-ratio:1;background:#e2e5e3;overflow:hidden;position:relative}.model{width:100%;height:100%;object-fit:contain;display:block;transform-origin:50% 89%;transition:transform .3s}
+.physical .model{transform:scale(var(--relative))}.caption{padding:14px 18px}.caption h3{margin:0;font-size:21px}.caption strong{font-size:28px}.caption p{font-size:13px;color:#4c6253}
+.notice{background:#fff6df;border-left:5px solid #c8942d;padding:16px 20px;margin:24px 0}.muted{color:#536959;font-size:14px}
+.scroll{overflow:auto}table{width:100%;border-collapse:collapse;background:white;white-space:nowrap}th,td{padding:10px 15px;border-bottom:1px solid #d4dfd6;text-align:left}th{background:#e3ece4}
+details{background:white;padding:15px;border-radius:12px;margin-top:18px}summary{font-weight:600;cursor:pointer}.front-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+figure{margin:18px 0}figure img{width:100%;height:auto;display:block}figcaption{font-size:13px;color:#536959}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){main{padding:18px 12px}.grid,.front-grid{grid-template-columns:1fr}nav{font-size:14px}.badge{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.model{transition:none}}
+</style></head><body><main>
+<nav aria-label="ページ移動"><span class="badge">通信不要の3D・解析収集なし</span><a id="language-switch" href="en/index.html" lang="en">English</a></nav>
+<h1>同じブロックで、ハロの大きさを比較</h1><p>2種類の外観を40・60・80・100 cm級で比較する、非公式の外観研究です。各案の形状と配色は、実際のブロック配置から生成しています。</p><p><strong>すべて8 mmピッチ・本体高9.6 mm、スタッド径4.8 mm・高さ1.8 mmの2×2／2×4ブロックです。小型ブロックへの置換や、完成模型全体の拡大縮小はしていません。</strong></p><p class="muted">この8案の系列内では同じ外観比率を用いています。大きくなるほど部品数が増え、同じ表示サイズではブロックが細かく見えます。</p>
+<p><a class="viewer-link" href="viewer360.html">360°で見る：回転・拡大して比較</a></p>
+<div class="controls"><button id="normalized" aria-pressed="true">輪郭を比較：同じ表示サイズ</button><button id="physical" aria-pressed="false">大きさを比較：同じ縮尺</button></div>
+<p id="mode-hint" class="muted" aria-live="polite">表示倍率を揃えて輪郭を比較しています。大きい模型ほど画面内のブロックが細かく見えます。</p>
+<section><h2>ベーシック版</h2><div class="grid"><article data-model="simple-400">
+<div class="stage"><img class="model" style="--relative:0.4032258064516129" src="assets/simple-400.png" alt="ベーシック版 · 40 cm級"></div>
+<div class="caption"><h3>40 cm級</h3>
+<strong>2,476 個</strong>
+<p>幅 × 奥行 × 高さ: 399.8 × 399.8 × 405.0 mm<br>
+2×4: 1,902 / 2×2: 574</p>
+<a href="viewer360.html?style=simple&amp;size=400">この案を360°で見る →</a></div></article><article data-model="simple-608">
+<div class="stage"><img class="model" style="--relative:0.6129032258064516" src="assets/simple-608.png" alt="ベーシック版 · 60 cm級"></div>
+<div class="caption"><h3>60 cm級</h3>
+<strong>5,703 個</strong>
+<p>幅 × 奥行 × 高さ: 607.8 × 607.8 × 606.6 mm<br>
+2×4: 4,742 / 2×2: 961</p>
+<a href="viewer360.html?style=simple&amp;size=608">この案を360°で見る →</a></div></article><article data-model="simple-800">
+<div class="stage"><img class="model" style="--relative:0.8064516129032258" src="assets/simple-800.png" alt="ベーシック版 · 80 cm級"></div>
+<div class="caption"><h3>80 cm級</h3>
+<strong>10,124 個</strong>
+<p>幅 × 奥行 × 高さ: 799.8 × 799.8 × 798.6 mm<br>
+2×4: 8,329 / 2×2: 1,795</p>
+<a href="viewer360.html?style=simple&amp;size=800">この案を360°で見る →</a></div></article><article data-model="simple-992">
+<div class="stage"><img class="model" style="--relative:1" src="assets/simple-992.png" alt="ベーシック版 · 100 cm級"></div>
+<div class="caption"><h3>100 cm級</h3>
+<strong>15,733 個</strong>
+<p>幅 × 奥行 × 高さ: 991.8 × 991.8 × 990.6 mm<br>
+2×4: 12,980 / 2×2: 2,753</p>
+<a href="viewer360.html?style=simple&amp;size=992">この案を360°で見る →</a></div></article></div></section><section><h2>ディテール版（青い目）</h2><div class="grid"><article data-model="mechanical-400">
+<div class="stage"><img class="model" style="--relative:0.4032258064516129" src="assets/mechanical-400.png" alt="ディテール版（青い目） · 40 cm級"></div>
+<div class="caption"><h3>40 cm級</h3>
+<strong>2,498 個</strong>
+<p>幅 × 奥行 × 高さ: 399.8 × 399.8 × 405.0 mm<br>
+2×4: 1,880 / 2×2: 618</p>
+<a href="viewer360.html?style=mechanical&amp;size=400">この案を360°で見る →</a></div></article><article data-model="mechanical-608">
+<div class="stage"><img class="model" style="--relative:0.6129032258064516" src="assets/mechanical-608.png" alt="ディテール版（青い目） · 60 cm級"></div>
+<div class="caption"><h3>60 cm級</h3>
+<strong>5,753 個</strong>
+<p>幅 × 奥行 × 高さ: 607.8 × 607.8 × 606.6 mm<br>
+2×4: 4,692 / 2×2: 1,061</p>
+<a href="viewer360.html?style=mechanical&amp;size=608">この案を360°で見る →</a></div></article><article data-model="mechanical-800">
+<div class="stage"><img class="model" style="--relative:0.8064516129032258" src="assets/mechanical-800.png" alt="ディテール版（青い目） · 80 cm級"></div>
+<div class="caption"><h3>80 cm級</h3>
+<strong>10,146 個</strong>
+<p>幅 × 奥行 × 高さ: 799.8 × 799.8 × 798.6 mm<br>
+2×4: 8,307 / 2×2: 1,839</p>
+<a href="viewer360.html?style=mechanical&amp;size=800">この案を360°で見る →</a></div></article><article data-model="mechanical-992">
+<div class="stage"><img class="model" style="--relative:1" src="assets/mechanical-992.png" alt="ディテール版（青い目） · 100 cm級"></div>
+<div class="caption"><h3>100 cm級</h3>
+<strong>15,869 個</strong>
+<p>幅 × 奥行 × 高さ: 991.8 × 991.8 × 990.6 mm<br>
+2×4: 12,844 / 2×2: 3,025</p>
+<a href="viewer360.html?style=mechanical&amp;size=992">この案を360°で見る →</a></div></article></div></section>
+<div class="notice"><strong>外観確認用・印刷用の完成設計ではありません</strong><br>仮配置の外形表示です。下面の空洞・嵌合、強度、支持、組立順、印刷は未検証です。部品数は外殻と内部リブを含み、台座・ヒンジ・予備・試験片を含みません。製造設計は保留中です。<br>比較条件として外殻と内部リブの公称厚さは16 mmです。大型化したときの強度・支持・転倒・組立順は未検証です。重量や印刷時間は実スライスしていないため示しません。</div>
+<section><h2>配置から計算した実寸と個数</h2><div class="scroll"><table><thead><tr>
+<th>外観</th><th>サイズ区分</th><th>幅 × 奥行 × 高さ（スタッド込み）</th><th>全体</th><th>うち内部リブ</th>
+</tr></thead><tbody><tr><td>ベーシック版</td>
+<td>40 cm級</td>
+<td>399.8 × 399.8 × 405.0 mm</td>
+<td>2,476</td><td>720</td></tr><tr><td>ベーシック版</td>
+<td>60 cm級</td>
+<td>607.8 × 607.8 × 606.6 mm</td>
+<td>5,703</td><td>1,684</td></tr><tr><td>ベーシック版</td>
+<td>80 cm級</td>
+<td>799.8 × 799.8 × 798.6 mm</td>
+<td>10,124</td><td>2,996</td></tr><tr><td>ベーシック版</td>
+<td>100 cm級</td>
+<td>991.8 × 991.8 × 990.6 mm</td>
+<td>15,733</td><td>4,692</td></tr><tr><td>ディテール版（青い目）</td>
+<td>40 cm級</td>
+<td>399.8 × 399.8 × 405.0 mm</td>
+<td>2,498</td><td>720</td></tr><tr><td>ディテール版（青い目）</td>
+<td>60 cm級</td>
+<td>607.8 × 607.8 × 606.6 mm</td>
+<td>5,753</td><td>1,684</td></tr><tr><td>ディテール版（青い目）</td>
+<td>80 cm級</td>
+<td>799.8 × 799.8 × 798.6 mm</td>
+<td>10,146</td><td>2,996</td></tr><tr><td>ディテール版（青い目）</td>
+<td>100 cm級</td>
+<td>991.8 × 991.8 × 990.6 mm</td>
+<td>15,869</td><td>4,692</td></tr></tbody></table></div><p class="muted">60 cm級の外径目標は608 mm、100 cm級は992 mmです。格子に合わせた区分で、60.00／100.00 cmちょうどではありません。</p></section>
+<details><summary>100 cm級を正面から見る</summary><div class="front-grid"><figure><img src="assets/simple-992-front.png" alt="ベーシック版 · 100 cm級"><figcaption>ベーシック版 · 100 cm級</figcaption></figure><figure><img src="assets/mechanical-992-front.png" alt="ディテール版（青い目） · 100 cm級"><figcaption>ディテール版（青い目） · 100 cm級</figcaption></figure></div></details>
+<p class="muted">原参考画像は再配布していません。掲載画像は、この研究の配置データから生成したCGです。</p>
+<p class="muted">非公式の個人制作研究です。作品・キャラクター・商標の権利者との提携や推奨、製品互換性、玩具認証を示すものではありません。 <a href="https://github.com/ktanino10/haro-brick-kit/blob/main/RIGHTS.md">権利・非公式作品について</a></p>
+<p><a href="viewer360.html" download>単独で使える360° HTMLを保存</a> · <a href="https://github.com/ktanino10/haro-brick-kit">ソース・全サイトのダウンロード</a></p>
+</main><script>
+const buttons=[document.getElementById("normalized"),document.getElementById("physical")];
+function setMode(physical){
+ document.body.classList.toggle("physical",physical);
+ buttons[0].setAttribute("aria-pressed",String(!physical));
+ buttons[1].setAttribute("aria-pressed",String(physical));
+ document.getElementById("mode-hint").textContent=physical?"100 cm級を基準に、CGの外径目標に合わせた同じ縮尺で表示しています。ブロックの画面上の大きさもほぼ同じになります。":"表示倍率を揃えて輪郭を比較しています。大きい模型ほど画面内のブロックが細かく見えます。";
+}
+buttons[0].addEventListener("click",()=>setMode(false));
+buttons[1].addEventListener("click",()=>setMode(true));
+</script></body></html>

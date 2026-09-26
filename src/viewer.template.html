@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="[[language]]" data-viewer-state="loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="haro-build" content="__HARO_BUILD_ID__">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <link rel="icon" href="data:,">
+  <title>[[pageTitle]]</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.65 system-ui, -apple-system, sans-serif; color: #193729; background: #f1f5f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1440px; margin: auto; padding: 22px 28px 38px; }
+    a { color: #285d3b; text-underline-offset: .2em; }
+    nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; }
+    .badge { background: #deeadb; border-radius: 20px; padding: 4px 12px; white-space: nowrap; font-size: 12px; }
+    h1 { margin: 16px 0 2px; font-size: clamp(25px, 3vw, 38px); line-height: 1.4; letter-spacing: .01em; }
+    .intro { margin: 0 0 18px; color: #52685a; font-size: 14px; }
+    #boot-diagnostics { margin: -6px 0 16px; }
+    #boot-stage { font-size: 12px; }
+    #boot-report { background: #e5eee4; padding: 12px; border-radius: 8px; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+    .viewer { min-width: 0; overflow: hidden; border: 1px solid #cddbd0; border-radius: 16px; background: white; }
+    .viewport { height: clamp(430px, 65vh, 740px); position: relative; overflow: hidden; background: #e6ece8; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+    canvas:active { cursor: grabbing; }
+    canvas:focus-visible { outline: 3px solid #307548; outline-offset: -4px; }
+    .viewport[data-failed="true"] canvas { visibility: hidden; }
+    .view-label { position: absolute; left: 16px; top: 12px; z-index: 1; margin: 0; font-size: 12px; color: #52685a; pointer-events: none; }
+    .overlay { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; background: #e6ece8f5; }
+    [hidden] { display: none !important; }
+    .loading-mark { width: 30px; height: 30px; margin-bottom: 12px; border: 3px solid #c8d7cc; border-top-color: #347749; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .loading-mark { animation: none; } }
+    .error { color: #73351c; background: #fff4e6; overflow: auto; }
+    .error strong { font-size: 20px; }
+    .error p { max-width: 40em; font-size: 14px; }
+    .error pre { font: 12px/1.6 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+    button, select { font: inherit; color: #23482d; border: 1px solid #799080; border-radius: 9px; background: white; min-height: 44px; }
+    button { padding: 8px 13px; cursor: pointer; }
+    button:hover:not(:disabled) { background: #edf4ee; }
+    button[aria-pressed="true"] { background: #285438; color: white; }
+    button:disabled, select:disabled { opacity: .6; cursor: wait; }
+    button:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid #70a77c; outline-offset: 3px; }
+    .toolbar { padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid #d5e0d7; }
+    .toolbar button { font-size: 14px; }
+    .toolbar .zoom { min-width: 44px; font-size: 20px; line-height: 1; padding: 5px 10px; }
+    .viewer-help { margin: 0; padding: 0 14px 12px; font-size: 12px; color: #536959; }
+    .panel { min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+    .selection { display: grid; gap: 14px; padding: 18px; border-radius: 14px; border: 1px solid #d1dfd4; background: white; }
+    label { display: block; font-size: 13px; font-weight: 650; }
+    select { display: block; margin-top: 5px; padding: 8px 30px 8px 10px; width: 100%; min-width: 0; }
+    .metrics { padding: 0 4px; }
+    .metrics h2 { font-size: 16px; margin: 0; }
+    #brick-count { display: block; font-variant-numeric: tabular-nums; font-size: 36px; line-height: 1.4; margin: 6px 0 10px; }
+    dl { margin: 0; }
+    dt { font-size: 12px; color: #52685a; margin-top: 12px; }
+    dd { margin: 2px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+    .constant { font-size: 13px; margin: 0; background: #e5eee4; border-radius: 12px; padding: 13px 15px; }
+    .constant strong { display: block; }
+    .notice { margin: 20px 0 12px; padding: 13px 17px; border-left: 4px solid #c8942d; border-radius: 0 8px 8px 0; background: #fff6df; font-size: 13px; }
+    .notice strong { display: block; font-size: 14px; }
+    details { margin-top: 12px; color: #536959; font-size: 12px; }
+    summary { cursor: pointer; font-size: 13px; }
+    details p { margin: 8px 0; }
+    details pre { white-space: pre-wrap; overflow-wrap: anywhere; font: 11px/1.6 ui-monospace, monospace; }
+    #model-status { min-height: 1.6em; font-size: 12px; color: #536959; margin: 0; }
+    @media (max-width: 900px) {
+      main { padding: 16px 16px 28px; }
+      .workspace { display: flex; flex-direction: column; gap: 14px; }
+      .panel { display: contents; }
+      .selection { order: -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: 100%; gap: 12px; padding: 12px; }
+      .viewer { width: 100%; }
+      .viewport { height: clamp(340px, 58svh, 650px); }
+      .metrics { width: 100%; }
+      .metrics h2 { display: inline; margin-right: 12px; }
+      #brick-count { display: inline; font-size: 28px; }
+      dl { display: flex; gap: 10px 28px; flex-wrap: wrap; }
+      .constant { width: 100%; }
+      #model-status { width: 100%; }
+    }
+    @media (max-width: 420px) {
+      main { padding: 13px 12px 25px; }
+      nav { gap: 6px; }
+      nav a { font-size: 13px; }
+      .badge { font-size: 11px; padding: 3px 8px; }
+      .toolbar { padding: 10px; gap: 6px; }
+      .toolbar button { padding: 7px 10px; }
+      .intro { margin-bottom: 12px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <nav aria-label="[[navigationLabel]]"><a href="index.html">[[back]]</a><a id="language-switch" data-path="[[languagePath]]" href="[[languagePath]]" lang="[[otherLanguage]]">[[otherName]]</a></nav>
+  <h1>[[title]]</h1>
+  <p class="intro">[[intro]] <span class="badge">[[badge]]</span></p>
+  <details id="boot-diagnostics">
+    <summary>[[diagnosticTitle]] <span id="boot-stage">[[initialStage]]</span></summary>
+    <p>[[buildLabel]]: <code id="build-id">__HARO_BUILD_ID__</code>. [[diagnosticDocument]]</p>
+    <pre id="boot-report">[[initialReport]]</pre>
+    <p id="page-error-explanation" hidden>[[pageErrorsHelp]]</p>
+    <pre id="page-error-report" hidden></pre>
+    <p>[[diagnosticPrivacy]]</p>
+  </details>
+  <noscript><p class="notice">[[noScript]]</p></noscript>
+  <div class="workspace">
+    <section class="viewer" aria-label="[[viewerLabel]]">
+      <div class="viewport" id="viewport" aria-busy="true">
+        <p class="view-label" id="view-label">[[stagePreparing]]</p>
+        <div class="overlay" id="loading" role="status">
+          <span class="loading-mark" aria-hidden="true"></span>
+          <span id="loading-message">[[loading]]</span>
+        </div>
+        <div class="overlay error" id="error" role="alert" hidden>
+          <strong>[[errorTitle]]</strong>
+          <p>[[errorHelp]]</p>
+          <p>[[errorDetails]]</p><pre id="error-detail"></pre>
+          <button id="retry" type="button">[[retry]]</button>
+          <p><a href="index.html">[[backError]]</a></p>
+        </div>
+      </div>
+      <div class="toolbar" aria-label="[[controlsLabel]]">
+        <button data-control data-view="front" type="button" disabled>[[front]]</button>
+        <button data-control data-view="back" type="button" disabled>[[backView]]</button>
+        <button data-control data-view="top" type="button" disabled>[[top]]</button>
+        <button data-control data-view="bottom" type="button" disabled>[[bottom]]</button>
+        <button data-control class="zoom" id="zoom-in" aria-label="[[zoomIn]]" type="button" disabled>＋</button>
+        <button data-control class="zoom" id="zoom-out" aria-label="[[zoomOut]]" type="button" disabled>−</button>
+        <button data-control id="auto-rotate" type="button" aria-pressed="false" disabled>[[autoStart]]</button>
+      </div>
+      <p class="viewer-help" id="viewer-help">[[controlsHelp]]</p>
+    </section>
+    <aside class="panel" aria-label="[[panelLabel]]">
+      <div class="selection">
+        <label>[[styleLabel]]<select id="style" data-control disabled><option value="simple">[[styleSimple]]</option><option value="mechanical">[[styleMechanical]]</option></select></label>
+        <label>[[sizeLabel]]<select id="size" data-control disabled><option value="400">[[class40]]</option><option value="608">[[class60]]</option><option value="800">[[class80]]</option><option value="992">[[class100]]</option></select></label>
+      </div>
+      <div class="metrics" aria-live="polite" aria-atomic="true">
+        <h2 id="model-name">[[preparing]]</h2><strong id="brick-count">—</strong>
+        <dl>
+          <div><dt>[[dimensionsLabel]]</dt><dd id="dimensions">—</dd></div>
+          <div><dt>[[typesLabel]]</dt><dd id="brick-types">—</dd></div>
+          <div><dt>[[ribsLabel]]</dt><dd id="rib-count">—</dd></div>
+        </dl>
+      </div>
+      <p class="constant"><strong>[[commonTitle]]</strong>[[common1]]<br>[[common2]]<br>[[common3]]</p>
+      <p id="model-status" role="status">[[loadingStatus]]</p>
+    </aside>
+  </div>
+  <p class="notice"><strong>[[warning]]</strong>[[warningBody]]</p>
+  <p class="intro">[[classes]]</p>
+  <p><a id="download-viewer" href="viewer360.html" download>[[download]]</a> · <a href="[[sourceUrl]]">[[source]]</a></p>
+  <details>
+    <summary>[[aboutTitle]]</summary>
+    <p>[[orientation]]</p>
+    <p>[[keyboard]]</p>
+    <p>[[geometry]]</p>
+    <p>[[offline]]</p>
+    <p>[[technicalErrors]]</p>
+    <p>Three.js r180 / OrbitControls / BufferGeometryUtils — MIT License</p>
+    <pre><!-- THREE_LICENSE --></pre>
+  </details>
+  <p class="intro">[[unofficial]] <a href="[[rightsUrl]]">[[rights]]</a></p>
+</main>
+<script>
+(() => {
+  const text = __BOOT_TEXT__;
+  function phrase(template, values = {}) {
+    return template.replace(/\{(\w+)\}/g, (_, key) => {
+      if (!Object.prototype.hasOwnProperty.call(values, key)) throw new Error(`Missing translation value: ${key}`);
+      return String(values[key]);
+    });
+  }
+  const boot = {
+    build: document.querySelector('meta[name="haro-build"]').content,
+    stage: "bootstrap", label: text.bootstrap, context: null, error: null, stack: null,
+    failureOperation: null, steps: [], pageErrorCount: 0, pageErrors: [], viewerErrors: [],
+  };
+  const snapshot = () => ({
+    ...boot, steps: boot.steps.map(step => ({ ...step })),
+    pageErrors: boot.pageErrors.map(error => ({ ...error })),
+    viewerErrors: boot.viewerErrors.map(error => ({ ...error })),
+    protocol: location.protocol, inFrame: window.top !== window,
+    documentState: document.readyState, visibility: document.visibilityState, hidden: document.hidden,
+    webgl2ApiPresent: typeof WebGL2RenderingContext !== "undefined", userAgent: navigator.userAgent,
+  });
+  function showBoot() {
+    const current = snapshot();
+    document.getElementById("boot-stage").textContent = boot.error !== null
+      ? phrase(text.stopped, { operation: boot.failureOperation })
+      : `— ${boot.label}${boot.pageErrorCount ? phrase(text.pageExceptionCount, { count: boot.pageErrorCount }) : ""}`;
+    document.getElementById("boot-report").textContent = [
+      phrase(text.build, { build: current.build }), phrase(text.stage, { stage: current.stage, label: current.label }),
+      phrase(text.document, { state: current.documentState, protocol: current.protocol, frame: current.inFrame }),
+      phrase(text.visibility, { visibility: current.visibility, hidden: current.hidden }),
+      phrase(text.api, { value: current.webgl2ApiPresent ? text.apiYes : text.apiNo }),
+      phrase(text.context, { value: current.context || text.notAcquired }),
+      phrase(text.browser, { value: current.userAgent }),
+      phrase(text.error, { value: current.error || text.none }),
+      ...(current.failureOperation ? [phrase(text.operation, { value: current.failureOperation })] : []),
+      ...(current.stack ? [phrase(text.stack, { value: current.stack.split("\n").slice(0, 5).join("\n") })] : []),
+      phrase(text.steps, { value: current.steps.map(step => step.stage).join(" → ") }),
+      ...(current.viewerErrors.length > 1
+        ? [phrase(text.following, { value: current.viewerErrors.slice(1).map(error => `${error.operation}: ${error.message}`).join("\n") })] : []),
+    ].join("\n");
+    document.getElementById("page-error-explanation").hidden = current.pageErrorCount === 0;
+    document.getElementById("page-error-report").hidden = current.pageErrorCount === 0;
+    document.getElementById("page-error-report").textContent = current.pageErrors.map(error =>
+      `${phrase(text.unattributed, { kind: error.kind, stage: error.stage })}\n${error.message}`
+      + (error.stack ? `\n${error.stack.split("\n").slice(0, 5).join("\n")}` : "")).join("\n\n");
+  }
+  function run(operation, action) {
+    try {
+      const result = action();
+      if (result && typeof result.then === "function") {
+        return Promise.resolve(result).catch(error => globalThis.haroFail(error, operation));
+      }
+      return result;
+    } catch (error) {
+      globalThis.haroFail(error, operation);
+    }
+  }
+  function recordPageError(kind, detail) {
+    boot.pageErrorCount++;
+    boot.pageErrors.push({
+      kind, message: String(detail), stack: detail instanceof Error ? detail.stack || null : null,
+      stage: boot.stage,
+    });
+    if (boot.pageErrors.length > 12) boot.pageErrors.shift();
+    showBoot();
+  }
+  globalThis.haroBoot = Object.freeze({
+    run, phrase, engineOperation: text.engineOperation,
+    step(stage, label) {
+      boot.stage = stage;
+      boot.label = label;
+      boot.steps.push({ stage, label });
+      if (boot.steps.length > 12) boot.steps.shift();
+      showBoot();
+    },
+    context(version) { boot.context = String(version); showBoot(); },
+    snapshot,
+  });
+  globalThis.haroBoot.step("bootstrap", text.bootstrap);
+  document.addEventListener("visibilitychange", () => run(text.opDiagnostic, showBoot));
+  document.addEventListener("readystatechange", () => run(text.opDiagnostic, showBoot));
+  globalThis.haroFail = (detail, operation = text.opViewer) => {
+    console.error(`[Haro viewer / ${operation}]`, detail);
+    boot.viewerErrors.push({ operation, message: String(detail) });
+    if (boot.viewerErrors.length > 12) boot.viewerErrors.shift();
+    if (boot.error !== null) {
+      showBoot();
+      return;
+    }
+    boot.error = String(detail);
+    boot.stack = detail instanceof Error ? detail.stack || null : null;
+    boot.failureOperation = operation;
+    showBoot();
+    document.getElementById("boot-diagnostics").open = true;
+    document.documentElement.dataset.viewerState = "error";
+    document.getElementById("viewport").dataset.failed = "true";
+    document.getElementById("viewport").setAttribute("aria-busy", "false");
+    document.getElementById("loading").hidden = true;
+    document.getElementById("error").hidden = false;
+    document.getElementById("error-detail").textContent = String(detail);
+    document.getElementById("model-status").textContent = text.statusFailed;
+    document.getElementById("model-name").textContent = text.nameFailed;
+    document.getElementById("view-label").textContent = "";
+    ["brick-count", "dimensions", "brick-types", "rib-count"].forEach(id => {
+      document.getElementById(id).textContent = "—";
+    });
+    document.getElementById("auto-rotate").setAttribute("aria-pressed", "false");
+    document.getElementById("auto-rotate").textContent = text.autoStart;
+    document.querySelectorAll("[data-control]").forEach(control => { control.disabled = true; });
+    window.dispatchEvent(new Event("haro-fatal"));
+  };
+  // Global events do not establish ownership; keep the browser's default logging intact.
+  window.addEventListener("error", event => recordPageError("error", event.error || event.message || text.resourceError));
+  window.addEventListener("unhandledrejection", event => recordPageError("unhandledrejection", event.reason));
+  window.addEventListener("load", () => run(text.opCompletion, () => {
+    if (!globalThis.haroViewer && document.documentElement.dataset.viewerState !== "error") {
+      globalThis.haroFail(text.engineMissing, text.opCompletion);
+    }
+  }));
+  document.getElementById("retry").addEventListener("click", () => run(text.opReload, () => location.reload()));
+})();
+</script>
+<!-- MODEL_DATA -->
+<script>globalThis.haroBoot.run(globalThis.haroBoot.engineOperation, () => { /* VIEWER_BUNDLE */ });</script>
+</body>
+</html>

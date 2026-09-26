@@ -1,0 +1,19 @@
+{
+  "name": "haro-brick-kit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bilingual offline Haro concept comparison and 360 viewer; not print-ready CAD",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test:unit": "node --test scripts/data.test.mjs",
+    "test:browser": "node scripts/check-browser.mjs",
+    "test": "npm run test:unit && npm run test:browser"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10",
+    "playwright-core": "1.55.1",
+    "pngjs": "7.0.0",
+    "three": "0.180.0"
+  }
+}
