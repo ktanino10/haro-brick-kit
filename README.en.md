@@ -2,7 +2,7 @@
 
 **English | [日本語](README.md)**
 
-The GitHub Pages URL will be listed here after deployment is verified. Open `docs/en/index.html` for the local site.
+[English comparison](https://ktanino10.github.io/haro-brick-kit/en/) · [360° viewer](https://ktanino10.github.io/haro-brick-kit/en/viewer360.html) · [日本語サイト](https://ktanino10.github.io/haro-brick-kit/)
 
 An unofficial personal study comparing Basic and Detailed (blue eyes) styles in
 40, 60, 80 and 100 cm classes, using unchanged physical brick dimensions.

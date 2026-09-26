@@ -2,7 +2,7 @@
 
 **[English](README.en.md) | 日本語**
 
-GitHub Pages の公開URLは、配信確認後にここへ記載します。ローカルでは `docs/index.html` を開けます。
+[日本語の比較ページ](https://ktanino10.github.io/haro-brick-kit/) · [360°ビュー](https://ktanino10.github.io/haro-brick-kit/viewer360.html) · [English site](https://ktanino10.github.io/haro-brick-kit/en/)
 
 同じ大きさのブロックを使い、ベーシック版とディテール版（青い目）の
 40・60・80・100 cm級を比較する、非公式の個人制作研究です。
